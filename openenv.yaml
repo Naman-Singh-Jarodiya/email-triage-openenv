@@ -1,0 +1,17 @@
+name: EmailTriage
+version: 1.0.0
+description: A real-world task simulating an email inbox where an agent must read, archive, or reply to incoming messages.
+tags:
+  - openenv
+  - real-world
+  - email
+tasks:
+  - id: 1
+    difficulty: easy
+    description: Handle a single basic email.
+  - id: 2
+    difficulty: medium
+    description: Triage two mixed-priority emails including spam and billing.
+  - id: 3
+    difficulty: hard
+    description: Manage a busy inbox with three incoming messages requiring varied actions.
