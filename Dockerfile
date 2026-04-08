@@ -6,7 +6,5 @@ COPY . /app
 RUN pip install uv
 RUN uv sync
 
-ENV PATH="/app/.venv/bin:$PATH"
-
 EXPOSE 7860
-CMD ["server"]
+CMD ["uv", "run", "server"]
