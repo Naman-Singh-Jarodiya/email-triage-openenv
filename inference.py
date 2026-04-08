@@ -1,46 +1,50 @@
 import os
 import json
-from openai import OpenAI
+import subprocess
+import sys
+
+try:
+    from openai import OpenAI
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "openai"])
+    from openai import OpenAI
+
 from env import Env, Act
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1/")
-MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3-70b-chat-hf")
-HF_TOKEN = os.getenv("HF_TOKEN")
-LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
+bu = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1/")
+mn = os.getenv("MODEL_NAME", "meta-llama/Llama-3-70b-chat-hf")
+ht = os.getenv("HF_TOKEN")
 
 def run():
-    cli = OpenAI(
-        api_key=HF_TOKEN,
-        base_url=API_BASE_URL
-    )
-    env = Env()
+    if not ht:
+        print("Error: HF_TOKEN missing")
+        return
+    
+    cl = OpenAI(api_key=ht, base_url=bu)
+    ev = Env()
 
-    for tsk in [1, 2, 3]:
-        print(f"START: {tsk}")
-        obs = env.reset(tsk)
-        don = False
+    for tk in [1, 2, 3]:
+        print(f"START: {tk}")
+        ob = ev.reset(tk)
+        dn = False
         
-        while not don:
-            prm = f"Obs: {obs.model_dump_json()}. Act: rd, arc, rep. JSON: act, idx, txt."
-            
+        while not dn:
+            pm = f"Obs: {ob.model_dump_json()}. Act: rd, arc, rep. JSON: act, idx, txt."
             try:
-                res = cli.chat.completions.create(
-                    model=MODEL_NAME,
-                    messages=[{"role": "user", "content": prm}]
+                rs = cl.chat.completions.create(
+                    model=mn,
+                    messages=[{"role": "user", "content": pm}]
                 )
-                out = res.choices[0].message.content
-                try:
-                    dct = json.loads(out)
-                    act = Act(**dct)
-                except:
-                    act = Act(act="rd", idx=0)
-            except:
-                act = Act(act="rd", idx=0)
+                ot = rs.choices[0].message.content
+                js = json.loads(ot)
+                ac = Act(**js)
+            except Exception:
+                ac = Act(act="rd", idx=0)
 
-            obs, rew, don, inf = env.step(act)
-            print(f"STEP: {rew}")
+            ob, rw, dn, io = ev.step(ac)
+            print(f"STEP: {rw}")
 
-        print(f"END: {inf['score']}")
+        print(f"END: {io['score']}")
 
 if __name__ == "__main__":
     run()
