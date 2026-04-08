@@ -25,3 +25,7 @@ def stp(act: Act):
 @app.get("/state")
 def sta():
     return env.state()
+
+@app.get("/")
+def rty():
+    return {"msg": "ok"}
