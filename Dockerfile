@@ -1,11 +1,6 @@
-    FROM python:3.10-slim
-
+FROM python:3.10-slim
 WORKDIR /app
-
 COPY . /app
-
-RUN pip install --no-cache-dir pydantic openai
-
-ENV HF_TOKEN=""
-
-CMD ["python", "inference.py"]
+RUN pip install --no-cache-dir pydantic openai fastapi uvicorn
+EXPOSE 7860
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
