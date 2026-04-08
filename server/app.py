@@ -8,27 +8,34 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from env import Env, Act
 
 app = fastapi.FastAPI()
-env = Env()
+en = Env()
 
 @app.post("/reset")
-def rst(req: Optional[Dict[str, Any]] = None):
-    tsk = 1
-    if req and "task" in req:
-        tsk = req["task"]
-    return env.reset(tsk)
+def rs(rq: Optional[Dict[str, Any]] = None):
+    tk = 1
+    if rq and "task" in rq:
+        tk = rq["task"]
+    ob = en.reset(tk)
+    return ob
 
 @app.post("/step")
-def stp(act: Act):
-    obs, rew, don, inf = env.step(act)
-    return {"observation": obs.model_dump(), "reward": rew, "done": don, "info": inf}
+def st(at: Act):
+    ob, rw, dn, ifo = en.step(at)
+    re = {"observation": ob.model_dump(), "reward": rw, "done": dn, "info": ifo}
+    return re
 
 @app.get("/state")
-def sta():
-    return env.state()
+def sa():
+    ob = en.state()
+    return ob
 
 @app.get("/")
-def rty():
-    return {"msg": "ok"}
+def ok():
+    re = {"msg": "ok"}
+    return re
 
-def run():
+def main():
     uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+
+if __name__ == "__main__":
+    main()
